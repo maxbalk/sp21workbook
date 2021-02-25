@@ -1,5 +1,14 @@
 import numpy as np
 
+def one_dim_entropy(px):
+    Hx = 0
+    for i, p in enumerate(px):
+        Hx += p * np.log2(1/p)
+    return Hx
+
+"""           """
+""" PROBLEM 2 """
+"""           """
 xy = np.array([
     [2/32, 2/32, 4/32, 8/32],
     [1/32, 4/32, 2/32, 1/32],
@@ -9,8 +18,6 @@ xy = np.array([
 px = np.zeros(4)
 py = np.zeros(4)
 Hxy = 0
-Hx = 0
-Hy = 0
 
 for x, row in enumerate(xy):
     for y, p in enumerate(row):
@@ -19,10 +26,9 @@ for x, row in enumerate(xy):
         if p != 0:
             Hxy += p * np.log2(1/p)
 
-for i, p in enumerate(px):
-    Hx += px[i] * np.log2(1/px[i])
-    Hy += py[i] * np.log2(1/py[i])
-
+Hx = one_dim_entropy(px)
+Hy = one_dim_entropy(py)
+print("Problem 2")
 print("H(x) = {}".format(Hx))
 print("H(y) = {}".format(Hy))
 print("H(xy) = {}".format(Hxy))
@@ -31,20 +37,49 @@ print("H(y|x) = {}".format(Hxy - Hx))
 print("I(x,y) = {}".format(Hx + Hy - Hxy))
 
 
+
+
+"""           """
+""" PROBLEM 4 """
+"""           """
 x = [1,2,2,3,3,3,4,4,4,4]
-y = np.power(x, 2)
-z = np.power(x, 3)
+y = [1,4,4,9,9,9,16,16,16,16]
 Hx = 0
 Hy = 0
-Hz = 0
 for i, val in enumerate(x):
     Hx += (val/len(x)) * np.log2( len(x)/val )
-    Hy += (val/len(y)) * np.log2( len(y)/val )
-    Hz += (val/len(z)) * np.log2( len(z)/val )
+for i, val in enumerate(y):
+    Hy += (y.count(val)/len(y)) * np.log2( len(y)/y.count(val) )
+print("Problem 4:")    
+print("\nH(X) = {}".format(Hx))
+print("H(X^2) = {}".format(Hy))
+print("the information contained in g(X)) is at most equal to the information in X. Our best case scenario, and goal, is to remove or reduce parts of the source but not lose any information\n")
 
-print("\nhx = {}".format(Hx))
-print("hy = {}".format(Hy))
-print("hz = {}".format(Hz))
 
-import string
-chars = string.printable
+
+"""           """
+""" PROBLEM 5 """
+"""           """
+from chardet import detect
+def get_encoding_type(file):
+    with open(file, 'rb') as f:
+        rawdata = f.read()
+    return detect(rawdata)['encoding']
+
+filename = 'state.txt'
+f = open(filename, 'r', encoding = get_encoding_type(filename))
+contents = f.read()
+counts = {}
+for char in contents:
+    if char not in counts:
+        counts[char] = 0
+    counts[char] += 1
+
+Px = {}
+nchars = len(contents)
+for key, value in counts.items():
+    Px[key] = value/nchars
+
+Htext = one_dim_entropy(Px.values())
+print("problem 5")
+print("entropy of the text file is {}".format(Htext))
