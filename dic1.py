@@ -1,6 +1,6 @@
 import numpy as np
 
-def one_dim_entropy(px):
+def one_dim_entropy(px: list):
     Hx = 0
     for i, p in enumerate(px):
         Hx += p * np.log2(1/p)
